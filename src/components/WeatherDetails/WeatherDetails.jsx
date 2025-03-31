@@ -1,9 +1,9 @@
-//Detailed 5 day forecast min/max, temo, icons, etc
+//Detailed 5 day forecast min/max
 import React from "react";
 import "./WeatherDetails.css";
 
 const WeatherDetails = ({ forecast }) => {
-  // Group forecast data by day
+  // Group forecast by day
   const grouped = {};
 
   forecast.list.forEach((item) => {
