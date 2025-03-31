@@ -1,6 +1,6 @@
 //Weather for current Location
 import React, { useEffect, useState } from "react";
-
+import { fetchWeatherByCoords } from "../../../src/services/weatherServices";
 import "./WeatherToday.css";
 
 const WeatherToday = () => {
