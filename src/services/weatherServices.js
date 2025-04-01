@@ -1,3 +1,7 @@
+// Here I wrote my fetch functions
+// This gets data from the OpenWeatherMap API using city name or GPS coordinates
+// I call these functions from App.jsx when the user searches or loads a location
+
 const API_KEY = import.meta.env.VITE_API_KEY;
 console.log("Loaded API KEY:", API_KEY);
 export async function fetchWeatherByCoords(lat, lon) {

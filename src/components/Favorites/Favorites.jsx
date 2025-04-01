@@ -1,3 +1,6 @@
+// This shows the saved favorite cities
+// Clicking one loads the weather again, and the X lets you remove it
+
 import React from "react";
 import "./Favorites.css";
 

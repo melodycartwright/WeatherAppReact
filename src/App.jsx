@@ -1,3 +1,7 @@
+// Main file that handles all logic and brings everything together
+// This is where I keep track of the weather, forecast, dark mode, and favorite cities
+// I pass info down to the other components from here
+
 import React, { useState } from "react";
 import "./App.css";
 import SearchBar from "./components/SearchBar/SearchBar";
@@ -63,8 +67,7 @@ function App() {
     return "default";
   };
 
-  const moodClass = `app ${getWeatherMood()} ${darkMode ? 'dark' : 'light'}`;
-
+  const moodClass = `app ${getWeatherMood()} ${darkMode ? "dark" : "light"}`;
 
   return (
     <div className={moodClass}>

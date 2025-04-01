@@ -1,3 +1,7 @@
+// This creates the 5-day forecast
+// I take the data and break it into days with min/max temp and icons
+// I also styled this so it scrolls in a row but stacks on small screens
+
 import React from "react";
 import "./WeatherDetails.css";
 

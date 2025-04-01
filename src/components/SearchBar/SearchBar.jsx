@@ -1,3 +1,6 @@
+// This is the input and search button at the top
+// When the user types a city and clicks search, it sends the value up to App.jsx
+
 import React, { useState } from "react";
 import "./SearchBar.css";
 import { fetchWeatherByCity } from "../../services/weatherServices";

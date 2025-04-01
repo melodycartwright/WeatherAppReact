@@ -1,3 +1,7 @@
+/* Main styles for layout, backgrounds, dark/light theme */
+/* I added different weather moods here like sunny, rainy, etc */
+/* Also styled the buttons and container padding */
+
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
 body {

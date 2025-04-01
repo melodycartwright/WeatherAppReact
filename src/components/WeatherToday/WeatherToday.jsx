@@ -1,3 +1,6 @@
+// This displays the current weather info (like temp, description, time)
+// I use the data passed from App.jsx to fill this in
+
 import React, { useEffect, useState } from "react";
 import "./WeatherToday.css";
 import { fetchWeatherByCoords } from "../../services/weatherServices";
