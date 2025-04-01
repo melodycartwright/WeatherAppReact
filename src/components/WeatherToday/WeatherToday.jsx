@@ -1,50 +1,38 @@
-//Weather for current Location
 import React, { useEffect, useState } from "react";
-import { fetchWeatherByCoords } from "../../../src/services/weatherServices";
 import "./WeatherToday.css";
+import { fetchWeatherByCoords } from "../../services/weatherServices";
 
 const WeatherToday = () => {
   const [weather, setWeather] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          try {
-            const data = await fetchWeatherByCoords(
-              position.coords.latitude,
-              position.coords.longitude
-            );
-            setWeather(data);
-          } catch (err) {
-            setError("Could not retrieve weather data.");
-          } finally {
-            setLoading(false);
-          }
-        },
-        () => {
-          setError("Location services blocked.");
-          setLoading(false);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const data = await fetchWeatherByCoords(
+            pos.coords.latitude,
+            pos.coords.longitude
+          );
+          setWeather(data);
+        } catch {
+          setError("Could not retrieve weather for your location.");
         }
-      );
-    } else {
-      setError("Geolocation not supported.");
-      setLoading(false);
-    }
+      },
+      () => {
+        setError("Location access denied.");
+      }
+    );
   }, []);
 
-  if (loading) return <p>Loading weather...</p>;
   if (error) return <p>{error}</p>;
+  if (!weather) return <p>Loading weather...</p>;
 
   return (
-    <div className="weather-today">
-      <h2>Today's Weather in {weather.name}</h2>
+    <div className="weather-box weather-today">
+      <h2>Weather in your area ({weather.name})</h2>
+      <p>{weather.weather[0].description}</p>
       <p>Temperature: {Math.round(weather.main.temp)}°C</p>
-      <p>Weather: {weather.weather[0].description}</p>
-      <p>Date: {new Date().toLocaleDateString()}</p>
-      <p>Time: {new Date().toLocaleTimeString()}</p>
     </div>
   );
 };

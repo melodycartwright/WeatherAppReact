@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import WeatherToday from "./components/WeatherToday/WeatherToday";
+import "./App.css";
 import SearchBar from "./components/SearchBar/SearchBar";
+import WeatherToday from "./components/WeatherToday/WeatherToday";
 import WeatherDetails from "./components/WeatherDetails/WeatherDetails";
 import Favorites from "./components/Favorites/Favorites";
 import {
   fetchFiveDayForecast,
   fetchWeatherByCity,
 } from "./services/weatherServices";
-import "./App.css";
 
 function App() {
   const [searchedWeather, setSearchedWeather] = useState(null);
@@ -16,6 +16,7 @@ function App() {
     const saved = localStorage.getItem("favorites");
     return saved ? JSON.parse(saved) : [];
   });
+  const [darkMode, setDarkMode] = useState(false);
 
   const handleCityWeather = async (data) => {
     setSearchedWeather(data);
@@ -23,15 +24,14 @@ function App() {
       const forecast = await fetchFiveDayForecast(data.name);
       setForecastData(forecast);
     } catch (err) {
-      console.error("Forecast fetch failed:", err);
-      setForecastData(null);
+      console.error("Failed to fetch forecast:", err);
     }
   };
 
   const handleFavoriteSelect = async (city) => {
     try {
-      const res = await fetchWeatherByCity(city);
-      setSearchedWeather(res);
+      const data = await fetchWeatherByCity(city);
+      setSearchedWeather(data);
       const forecast = await fetchFiveDayForecast(city);
       setForecastData(forecast);
     } catch (err) {
@@ -39,18 +39,18 @@ function App() {
     }
   };
 
-  const handleSaveFavorite = () => {
+  const handleRemoveFavorite = (city) => {
+    const updated = favorites.filter((fav) => fav !== city);
+    setFavorites(updated);
+    localStorage.setItem("favorites", JSON.stringify(updated));
+  };
+
+  const saveToFavorites = () => {
     if (searchedWeather && !favorites.includes(searchedWeather.name)) {
       const updated = [...favorites, searchedWeather.name];
       setFavorites(updated);
       localStorage.setItem("favorites", JSON.stringify(updated));
     }
-  };
-
-  const handleRemoveFavorite = (city) => {
-    const updated = favorites.filter((fav) => fav !== city);
-    setFavorites(updated);
-    localStorage.setItem("favorites", JSON.stringify(updated));
   };
 
   const getWeatherMood = () => {
@@ -63,34 +63,48 @@ function App() {
     return "default";
   };
 
-  const moodClass = `app ${getWeatherMood()}`;
+  const moodClass = `app ${getWeatherMood()} ${darkMode ? 'dark' : 'light'}`;
+
 
   return (
     <div className={moodClass}>
-      <h1>My Weather App</h1>
-      <SearchBar onCityWeather={handleCityWeather} />
-      <Favorites
-        favorites={favorites}
-        onSelect={handleFavoriteSelect}
-        onRemove={handleRemoveFavorite}
-      />
+      <button onClick={() => setDarkMode(!darkMode)} className="toggle-theme">
+        {darkMode ? "☀️ Light" : "🌙 Dark"}
+      </button>
+      <div className="container">
+        <h1>My Weather App</h1>
 
-      {searchedWeather ? (
-        <>
-          <div className="weather-box">
-            <h2>Weather in {searchedWeather.name}</h2>
-            <p>Temperature: {Math.round(searchedWeather.main.temp)}°C</p>
-            <p>Weather: {searchedWeather.weather[0].description}</p>
-            <p>Date: {new Date().toLocaleDateString()}</p>
-            <p>Time: {new Date().toLocaleTimeString()}</p>
-            <button onClick={handleSaveFavorite}>Spara som favorit</button>
-          </div>
+        <SearchBar onCityWeather={handleCityWeather} />
 
-          {forecastData && <WeatherDetails forecast={forecastData} />}
-        </>
-      ) : (
-        <WeatherToday />
-      )}
+        <div className="section">
+          <Favorites
+            favorites={favorites}
+            onSelect={handleFavoriteSelect}
+            onRemove={handleRemoveFavorite}
+          />
+        </div>
+
+        {searchedWeather ? (
+          <>
+            <div className="weather-box section">
+              <h2>Weather in {searchedWeather.name}</h2>
+              <p>Temperature: {Math.round(searchedWeather.main.temp)}°C</p>
+              <p>{searchedWeather.weather[0].description}</p>
+              <p>{new Date().toLocaleDateString()}</p>
+              <p>{new Date().toLocaleTimeString()}</p>
+              <button onClick={saveToFavorites}>Save as Favorite</button>
+            </div>
+
+            {forecastData && (
+              <div className="section">
+                <WeatherDetails forecast={forecastData} />
+              </div>
+            )}
+          </>
+        ) : (
+          <WeatherToday />
+        )}
+      </div>
     </div>
   );
 }

@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+.favorites-container {
+    margin-top: -20px;
+    text-align: center;
+}
+
+.favorites-container h3 {
+    font-size: 1.1rem;
+    margin-bottom: 35px;
+}
+
+
+.favorites-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    justify-content: center;
+    
+    
+}
+
+.favorite-item {
+    display: flex;
+    align-items: center;
+    background: #f0f0f0;
+    border-radius: 20px;
+    padding: 0.35em 0.75rem;
+    font-size: 0.9rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    padding-top: 1px;
+  
+}
+
+.favorite-item button {
+    background: none;
+    border: none;
+    font-weight: 500;
+    color: #1a73e8;
+    cursor: pointer;
+    padding: 0;
+    margin-right: 0.4rem;
+}
+
+.favorite-item span {
+    cursor: pointer;
+    font-size: 1rem;
+    color: #aaa;
+    margin-left: 0.2rem;
+    transition: color 0.2s ease;
+}
+
+.favorite-item span:hover {
+    color: #666;
+}

@@ -1,4 +1,3 @@
-//Save & view favorite locations
 import React from "react";
 import "./Favorites.css";
 
@@ -7,12 +6,12 @@ const Favorites = ({ favorites, onSelect, onRemove }) => {
 
   return (
     <div className="favorites-container">
-      <h3>Favoritplatser</h3>
+      <h3>Favorite Locations</h3>
       <div className="favorites-list">
         {favorites.map((city, i) => (
-          <div key={i} className="favorite-item">
+          <div className="favorite-item" key={i}>
             <button onClick={() => onSelect(city)}>{city}</button>
-            <span onClick={() => onRemove(city)}>❌</span>
+            <span onClick={() => onRemove(city)}> ✖</span>
           </div>
         ))}
       </div>

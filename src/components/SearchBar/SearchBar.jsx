@@ -1,7 +1,6 @@
-//searchbar for city weather
 import React, { useState } from "react";
-import { fetchWeatherByCity } from "../../../src/services/weatherServices";
 import "./SearchBar.css";
+import { fetchWeatherByCity } from "../../services/weatherServices";
 
 const SearchBar = ({ onCityWeather }) => {
   const [city, setCity] = useState("");
@@ -13,6 +12,7 @@ const SearchBar = ({ onCityWeather }) => {
       onCityWeather(data);
       setError("");
     } catch (err) {
+      console.error(err);
       setError("City not found.");
     }
   };
@@ -22,7 +22,7 @@ const SearchBar = ({ onCityWeather }) => {
       <input
         type="text"
         value={city}
-        placeholder="Enter city..."
+        placeholder="Search city..."
         onChange={(e) => setCity(e.target.value)}
       />
       <button onClick={handleSearch}>Search</button>
