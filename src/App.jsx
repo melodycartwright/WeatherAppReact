@@ -1,35 +1,98 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from "react";
+import WeatherToday from "./components/WeatherToday/WeatherToday";
+import SearchBar from "./components/SearchBar/SearchBar";
+import WeatherDetails from "./components/WeatherDetails/WeatherDetails";
+import Favorites from "./components/Favorites/Favorites";
+import {
+  fetchFiveDayForecast,
+  fetchWeatherByCity,
+} from "./services/weatherServices";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [searchedWeather, setSearchedWeather] = useState(null);
+  const [forecastData, setForecastData] = useState(null);
+  const [favorites, setFavorites] = useState(() => {
+    const saved = localStorage.getItem("favorites");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const handleCityWeather = async (data) => {
+    setSearchedWeather(data);
+    try {
+      const forecast = await fetchFiveDayForecast(data.name);
+      setForecastData(forecast);
+    } catch (err) {
+      console.error("Forecast fetch failed:", err);
+      setForecastData(null);
+    }
+  };
+
+  const handleFavoriteSelect = async (city) => {
+    try {
+      const res = await fetchWeatherByCity(city);
+      setSearchedWeather(res);
+      const forecast = await fetchFiveDayForecast(city);
+      setForecastData(forecast);
+    } catch (err) {
+      console.error("Could not load favorite city:", err);
+    }
+  };
+
+  const handleSaveFavorite = () => {
+    if (searchedWeather && !favorites.includes(searchedWeather.name)) {
+      const updated = [...favorites, searchedWeather.name];
+      setFavorites(updated);
+      localStorage.setItem("favorites", JSON.stringify(updated));
+    }
+  };
+
+  const handleRemoveFavorite = (city) => {
+    const updated = favorites.filter((fav) => fav !== city);
+    setFavorites(updated);
+    localStorage.setItem("favorites", JSON.stringify(updated));
+  };
+
+  const getWeatherMood = () => {
+    if (!searchedWeather) return "default";
+    const main = searchedWeather.weather[0].main.toLowerCase();
+    if (main.includes("cloud")) return "cloudy";
+    if (main.includes("rain")) return "rainy";
+    if (main.includes("clear")) return "sunny";
+    if (main.includes("snow")) return "snowy";
+    return "default";
+  };
+
+  const moodClass = `app ${getWeatherMood()}`;
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className={moodClass}>
+      <h1>My Weather App</h1>
+      <SearchBar onCityWeather={handleCityWeather} />
+      <Favorites
+        favorites={favorites}
+        onSelect={handleFavoriteSelect}
+        onRemove={handleRemoveFavorite}
+      />
+
+      {searchedWeather ? (
+        <>
+          <div className="weather-box">
+            <h2>Weather in {searchedWeather.name}</h2>
+            <p>Temperature: {Math.round(searchedWeather.main.temp)}°C</p>
+            <p>Weather: {searchedWeather.weather[0].description}</p>
+            <p>Date: {new Date().toLocaleDateString()}</p>
+            <p>Time: {new Date().toLocaleTimeString()}</p>
+            <button onClick={handleSaveFavorite}>Spara som favorit</button>
+          </div>
+
+          {forecastData && <WeatherDetails forecast={forecastData} />}
+        </>
+      ) : (
+        <WeatherToday />
+      )}
+    </div>
+  );
 }
 
-export default App
+export default App;
